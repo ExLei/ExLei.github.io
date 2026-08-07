@@ -9,8 +9,8 @@ const { headings } = Astro.props;
 ---
 {
 	headings.length > 0 && (
-		<aside class="hidden w-48 shrink-0 xl:block" aria-label="文章大纲">
-			<div class="sticky top-6 max-h-[calc(100dvh-3rem)] overflow-y-auto rounded-xl border border-hairline bg-paper p-4">
+		<aside class="sticky top-6 hidden w-48 shrink-0 xl:block" aria-label="文章大纲">
+			<div class="max-h-[calc(100dvh-3rem)] overflow-y-auto rounded-xl border border-hairline bg-paper p-4">
 				<p class="font-mono text-xs uppercase tracking-wider text-ink-tertiary">目录</p>
 				<ul id="toc-nav" class="mt-4 space-y-2 text-sm">
 					{headings.map((h) => (
@@ -48,7 +48,7 @@ const { headings } = Astro.props;
 		});
 		if (map.size === 0) return;
 
-		let current = null;
+		let current: string | null = null;
 		const observer = new IntersectionObserver(
 			(entries) => {
 				for (const entry of entries) {
