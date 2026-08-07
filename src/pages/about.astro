@@ -1,0 +1,30 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { siteConfig } from "../config";
+---
+<BaseLayout title="关于">
+	<main class="mx-auto w-full max-w-2xl px-4 pt-14 pb-32">
+		<h1 class="text-3xl font-bold tracking-tight">关于</h1>
+
+		<div class="mt-8 flex items-center gap-4">
+			<img
+				src={siteConfig.author.avatar}
+				alt={siteConfig.author.name}
+				class="size-16 rounded-full border border-hairline"
+			/>
+			<div>
+				<p class="text-lg font-semibold">{siteConfig.author.name}</p>
+				<p class="text-sm text-ink-secondary">{siteConfig.subtitle}</p>
+			</div>
+		</div>
+
+		<div class="prose prose-neutral mt-10 max-w-none dark:prose-invert">
+			<p>新人博主，只会夏季八写。记录 Windows 折腾过程与日常。</p>
+			<ul>
+				<li>
+					GitHub：<a href="https://github.com/ExLei">github.com/ExLei</a>
+				</li>
+			</ul>
+		</div>
+	</main>
+</BaseLayout>

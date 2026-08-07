@@ -1,0 +1,44 @@
+---
+import "../styles/global.css";
+import NavContainer from "../components/nav/NavContainer.astro";
+import ThemeToggle from "../components/ThemeToggle.svelte";
+import { siteConfig } from "../config";
+
+interface Props {
+	title?: string;
+	description?: string;
+	/** 从 Pagefind 搜索索引排除（如 404 页） */
+	pagefindIgnore?: boolean;
+}
+
+const { title, description, pagefindIgnore } = Astro.props;
+const pageTitle = title ? `${title} · ${siteConfig.title}` : siteConfig.title;
+---
+<!doctype html>
+<html lang={siteConfig.lang} data-pagefind-ignore={pagefindIgnore || undefined}>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>{pageTitle}</title>
+		<meta name="description" content={description ?? siteConfig.description} />
+		<meta name="generator" content={Astro.generator} />
+		<link rel="icon" type="image/svg+xml" href={new URL("/favicon.svg", Astro.site).pathname} />
+		<script is:inline>
+			// 主题初始化（防闪烁）：localStorage > 系统偏好
+			(function () {
+				var saved = localStorage.getItem("theme");
+				var dark =
+					saved === "dark" ||
+					(saved !== "light" && matchMedia("(prefers-color-scheme: dark)").matches);
+				document.documentElement.classList.toggle("dark", dark);
+			})();
+		</script>
+	</head>
+	<body>
+		<div id="swup" class="transition-main">
+			<slot />
+		</div>
+		<ThemeToggle client:load />
+		<NavContainer />
+	</body>
+</html>

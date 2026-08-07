@@ -1,0 +1,76 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import PostMeta from "../../components/PostMeta.astro";
+import Toc from "../../components/Toc.astro";
+import { getPost } from "../../lib/posts";
+import { withBase } from "../../config";
+import { getCollection, render } from "astro:content";
+
+export async function getStaticPaths() {
+	const posts = await getCollection("posts");
+	return posts
+		.filter((p) => !p.data.draft)
+		.map((p) => ({ params: { slug: p.id }, props: { post: p } }));
+}
+
+const { post } = Astro.props;
+const { Content, headings } = await render(post);
+const { prev, next } = (await getPost(post.id))!;
+---
+<BaseLayout title={post.data.title} description={post.data.description}>
+	<main class="w-full px-4 pt-14 pb-32">
+		<div class="mx-auto flex w-full max-w-4xl items-start gap-10">
+			<div class="min-w-0 flex-1">
+				{headings.length > 0 && (
+					<details class="mb-6 rounded-xl border border-hairline xl:hidden">
+						<summary class="cursor-pointer select-none px-4 py-3 font-mono text-xs uppercase tracking-wider text-ink-tertiary">
+							目录 · {headings.length} 节
+						</summary>
+						<nav class="border-t border-hairline px-4 py-3" aria-label="文章大纲">
+							<ul class="space-y-1.5 text-sm">
+								{headings.map((h) => (
+									<li class:list={[h.depth === 2 ? "pl-0" : h.depth === 3 ? "pl-4" : "pl-8"]}>
+										<a href={`#${h.slug}`} class="toc-link text-ink-secondary transition-colors hover:text-accent">
+											{h.text}
+										</a>
+									</li>
+								))}
+							</ul>
+						</nav>
+					</details>
+				)}
+
+				<article>
+					<header>
+						<h1 class="text-3xl font-bold leading-snug tracking-tight">{post.data.title}</h1>
+						<div class="mt-3">
+							<PostMeta post={post} />
+						</div>
+					</header>
+					<div class="prose prose-neutral mt-10 max-w-none dark:prose-invert">
+						<Content />
+					</div>
+					<footer class="mt-14 border-t border-hairline pt-6">
+						<nav class="flex items-center justify-between gap-4 text-sm" aria-label="上下篇">
+							{prev ? (
+								<a href={withBase(`/posts/${prev.id}/`)} class="transition-colors hover:text-accent">
+									← {prev.data.title}
+								</a>
+							) : (
+								<span></span>
+							)}
+							{next ? (
+								<a href={withBase(`/posts/${next.id}/`)} class="text-right transition-colors hover:text-accent">
+									{next.data.title} →
+								</a>
+							) : (
+								<span></span>
+							)}
+						</nav>
+					</footer>
+				</article>
+			</div>
+			<Toc headings={headings} />
+		</div>
+	</main>
+</BaseLayout>
