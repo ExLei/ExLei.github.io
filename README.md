@@ -1,6 +1,6 @@
 # ExLei 的个人博客
 
-基于 [Astro](https://astro.build) 的静态博客，部署于 GitHub Pages 根路径（https://exlei.github.io/）。记录 Windows 折腾过程与日常。
+基于 [Astro](https://astro.build) 的静态博客，部署于 GitHub Pages 根路径（<https://exlei.github.io/>）。记录 Windows 折腾过程与日常。
 
 ## 技术栈
 
@@ -86,7 +86,7 @@ export const navConfig = {
 
 ## 部署
 
-push 到 `main` 分支自动触发 GitHub Actions（`.github/workflows/deploy.yml`，使用 bun 构建）并部署到 **https://exlei.github.io/**。
+push 到 `main` 分支自动触发 GitHub Actions（`.github/workflows/deploy.yml`，使用 bun 构建）并部署到 **[https://exlei.github.io/](https://exlei.github.io/)**。
 
 ## 后台管理（Pages CMS）
 
@@ -94,13 +94,13 @@ push 到 `main` 分支自动触发 GitHub Actions（`.github/workflows/deploy.ym
 
 ### 首次配置
 
-1. 打开 **https://pagescms.org**，点击 **Login with GitHub**
+1. 打开 **[https://pagescms.org](https://pagescms.org)**，点击 **Login with GitHub**
 2. 添加网站：选择仓库 `ExLei/ExLei.github.io`（按提示安装 Pages CMS GitHub App 并授权该仓库）
 3. 自动识别仓库根 `.pages.yml`（文章集合 + 标题/日期/摘要/分类/草稿/正文）
 
 ### 使用
 
-- 后台入口：**https://pagescms.org**（登录后进入网站管理）
+- 后台入口：**[https://pagescms.org](https://pagescms.org)**（登录后进入网站管理）
 - 新建文章：填标题、日期，文件名即 slug（如 `fix-xbox-app-error-0x80070057`），富文本编辑正文
 - 保存后自动 commit 到 `main` → GitHub Actions 自动部署上线
 - 图片上传至 `public/assets/images/`，文章内引用为 `/assets/images/<文件名>`
@@ -114,4 +114,4 @@ push 到 `main` 分支自动触发 GitHub Actions（`.github/workflows/deploy.ym
 
 ## RSS
 
-订阅地址：**https://exlei.github.io/rss.xml**（每篇文章的链接均为绝对 URL）；所有页面底部 footer 均有入口，head 含 `<link rel="alternate" type="application/rss+xml">` 供阅读器自动发现。
+订阅地址：**[https://exlei.github.io/rss.xml](https://exlei.github.io/rss.xml)**（每篇文章的链接均为绝对 URL）；所有页面底部 footer 均有入口，head 含 `<link rel="alternate" type="application/rss+xml">` 供阅读器自动发现。
