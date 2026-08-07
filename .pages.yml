@@ -1,0 +1,46 @@
+# Pages CMS 后台配置（pagescms.org）
+# 登录方式：GitHub 官方 OAuth（登录 GitHub 时自动支持 2FA 动态验证码），零自建服务
+# 文档：https://pagescms.org/docs/configuration/
+
+# 媒体文件：上传存到 public/assets/images，写入文章的 URL 带 base 子路径前缀
+media:
+  input: public/assets/images
+  output: /blog.github.io/assets/images
+
+content:
+  - name: posts
+    label: 文章
+    type: collection
+    path: src/content/posts
+    format: yaml-frontmatter
+    # 新建文章时输入文件名（即 slug），如 fix-xbox-app-error-0x80070057
+    filename:
+      template: "{primary}.md"
+      field: create
+    view:
+      primary: title
+      sort: published
+      order: desc
+    fields:
+      - name: title
+        label: 标题
+        type: string
+        required: true
+      - name: published
+        label: 发布时间
+        type: date
+        required: true
+        options:
+          format: "yyyy-MM-dd"
+      - name: description
+        label: 摘要
+        type: text
+      - name: category
+        label: 分类
+        type: string
+      - name: draft
+        label: 草稿
+        type: boolean
+      - name: body
+        label: 正文
+        type: rich-text
