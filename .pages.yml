@@ -2,10 +2,10 @@
 # 登录方式：GitHub 官方 OAuth（登录 GitHub 时自动支持 2FA 动态验证码），零自建服务
 # 文档：https://pagescms.org/docs/configuration/
 
-# 媒体文件：上传存到 public/assets/images，写入文章的 URL 带 base 子路径前缀
+# 媒体文件：上传存到 public/assets/images，写入文章的 URL 为根路径 /assets/images
 media:
   input: public/assets/images
-  output: /blog.github.io/assets/images
+  output: /assets/images
 
 content:
   - name: posts

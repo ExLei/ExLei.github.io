@@ -4,7 +4,6 @@ published: 2025-09-10
 description: 荣耀手机助理与 Windows 内存完整性（内核隔离）不兼容的问题记录。
   - 荣耀
   - Windows
-category: 求助
 draft: false
 ---
 环境：Windows 26100.5074  MagicOS 9.0.0.187
