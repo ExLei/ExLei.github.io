@@ -31,9 +31,9 @@ export const navItems: Array<{ label: string; href: string; icon: string }> = [
 	{ label: "关于", href: "/about/", icon: "material-symbols:person-rounded" },
 ];
 
-/** 为逻辑路径拼接 base 前缀（GitHub Pages 子路径） */
+/** 为逻辑路径拼接 base 前缀（当前为根路径部署，base = "/"） */
 export function withBase(path: string): string {
-	const base = import.meta.env.BASE_URL; // "/blog.github.io/"
+	const base = import.meta.env.BASE_URL; // "/"
 	if (path.startsWith(base)) return path;
 	return base.replace(/\/+$/, "") + path;
 }
