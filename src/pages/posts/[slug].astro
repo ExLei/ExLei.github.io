@@ -18,7 +18,7 @@ const { Content, headings } = await render(post);
 const { prev, next } = (await getPost(post.id))!;
 ---
 <BaseLayout title={post.data.title} description={post.data.description}>
-	<main class="w-full px-4 pt-14 pb-32">
+	<main class="w-full px-4 pt-14 pb-12">
 		<div class="mx-auto flex w-full max-w-4xl items-start gap-10">
 			<div class="min-w-0 flex-1">
 				{headings.length > 0 && (
