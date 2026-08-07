@@ -2,7 +2,6 @@
 title: "修复Xbox应用无法打开 错误代码-0x80070057"
 published: 2025-07-19
 description: "Xbox 应用打不开，错误 0x80070057？用官方的 Gaming Services 修复工具解决。"
-category: "技术"
 ---
 
 翻阅 Xbox 支持网站

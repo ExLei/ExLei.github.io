@@ -1,15 +1,14 @@
 ---
-title: "WSL2 磁盘瘦身：把 ext4.vhdx 压到 100 GB"
+title: "如何调整 WSL2 虚拟磁盘大小"
 published: 2026-08-08
 description: "WSL2 的 ext4.vhdx 只增不减，实测 230.6 GB 文件实际只用 55 GB。备份后把默认 VHD 大小改为 100 GB，注销再导入即可瘦身。"
 tags: [WSL, Windows, 磁盘]
-category: "技术"
 draft: false
 ---
 
 `ext4.vhdx` 是动态扩展盘，只增不减：删文件、清 Docker、清缓存，文件都不会变小。新装发行版默认上限 1 TB (1048576 MB)，迟早长满。本文实测：文件 230.6 GB，实际只用 55 GB。
 
-做法：备份 → 改默认 VHD 大小 → 注销 → 重新导入，数据原样保留。
+做法：备份 → 改默认 VHD 大小 → 注销 → 重新导入，数据原样保留。下面以缩小到 100 GB 为例。
 
 ## 开始前
 
