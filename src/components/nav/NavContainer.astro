@@ -1,11 +1,15 @@
 ---
 import { navConfig } from "../../config";
 import Dock from "./Dock.svelte";
+import FilterDock from "./FilterDock.svelte";
 import SideNav from "./SideNav.svelte";
 import MobileTabBar from "./MobileTabBar.svelte";
 ---
 {navConfig.position === "bottom" ? (
-	<Dock client:load />
+	<div class="fixed bottom-3 left-1/2 z-50 hidden -translate-x-1/2 items-end gap-3 md:flex">
+		<FilterDock client:load />
+		<Dock client:load />
+	</div>
 ) : (
 	<SideNav client:load position={navConfig.position === "right" ? "right" : "left"} />
 )}

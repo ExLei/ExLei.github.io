@@ -50,7 +50,7 @@
 	bind:this={dockEl}
 	onpointermove={handleMove}
 	onpointerleave={handleLeave}
-	class="fixed bottom-3 left-1/2 z-50 hidden -translate-x-1/2 items-end gap-1.5 rounded-2xl border border-hairline bg-paper/85 px-3 py-2 shadow-lg backdrop-blur-md md:flex"
+	class="flex items-end gap-1.5 rounded-2xl border border-hairline bg-paper/85 px-3 py-2 shadow-lg backdrop-blur-md"
 	aria-label="主导航"
 >
 	{#each navItems as item, i (item.href)}
