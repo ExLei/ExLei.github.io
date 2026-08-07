@@ -1,0 +1,12 @@
+---
+import { navConfig } from "../../config";
+import Dock from "./Dock.svelte";
+import SideNav from "./SideNav.svelte";
+import MobileTabBar from "./MobileTabBar.svelte";
+---
+{navConfig.position === "bottom" ? (
+	<Dock client:load />
+) : (
+	<SideNav client:load position={navConfig.position === "right" ? "right" : "left"} />
+)}
+<MobileTabBar client:load />

@@ -1,0 +1,22 @@
+---
+import type { Post } from "../lib/posts";
+import PostMeta from "./PostMeta.astro";
+import { withBase } from "../config";
+
+interface Props {
+	post: Post;
+}
+
+const { post } = Astro.props;
+---
+<article class="border-b border-hairline py-6">
+	<h2 class="text-xl font-semibold leading-snug">
+		<a href={withBase(`/posts/${post.id}/`)} class="transition-colors hover:text-accent">
+			{post.data.title}
+		</a>
+	</h2>
+	{post.data.description && (
+		<p class="mt-2 text-sm text-ink-secondary">{post.data.description}</p>
+	)}
+	<PostMeta post={post} />
+</article>
