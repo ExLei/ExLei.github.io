@@ -24,11 +24,6 @@ export const navConfig = {
 	position: "bottom" as "bottom" | "left" | "right",
 };
 
-/* 首页筛选栏位置：left（默认，参考 Twilight 侧边栏）| right */
-export const homeConfig = {
-	sidebarPosition: "left" as "left" | "right",
-};
-
 export const navItems: Array<{ label: string; href: string; icon: string }> = [
 	{ label: "首页", href: "/", icon: "material-symbols:home-rounded" },
 	{ label: "归档", href: "/archive/", icon: "material-symbols:archive-rounded" },

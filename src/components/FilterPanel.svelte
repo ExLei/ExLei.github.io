@@ -1,17 +1,46 @@
 <script lang="ts">
 	import { filterState, type PostData } from "../lib/filter.svelte";
+	import { withBase } from "../config";
 
-	let { posts }: { posts: PostData[] } = $props();
+	/* 数据自取：构建期 search-index.json（客户端 fetch，解耦页面 props） */
+	let posts = $state<PostData[] | null>(null);
+
+	$effect(() => {
+		if (posts !== null) return;
+		fetch(withBase("/search-index.json"))
+			.then((r) => r.json())
+			.then((d: Array<{ slug: string; title: string; description: string; date: string; tags: string[]; category: string }>) => {
+				posts = d.map((x) => ({
+					slug: x.slug,
+					title: x.title,
+					description: x.description,
+					published: x.date,
+					tags: x.tags,
+					category: x.category,
+					readingMinutes: 0,
+				}));
+			})
+			.catch(() => {
+				posts = [];
+			});
+	});
 
 	const years = $derived(
-		[...new Set(posts.map((p) => new Date(p.published).getFullYear()))].sort((a, b) => b - a),
+		posts
+			? [...new Set(posts.map((p) => new Date(p.published).getFullYear()))].sort((a, b) => b - a)
+			: [],
 	);
-	const allTags = $derived([...new Set(posts.flatMap((p) => p.tags))].sort());
+	const allTags = $derived(posts ? [...new Set(posts.flatMap((p) => p.tags))].sort() : []);
 	const yearCounts = $derived(
-		new Map(years.map((y) => [y, posts.filter((p) => new Date(p.published).getFullYear() === y).length])),
+		new Map(
+			years.map((y) => [
+				y,
+				posts ? posts.filter((p) => new Date(p.published).getFullYear() === y).length : 0,
+			]),
+		),
 	);
 	const tagCounts = $derived(
-		new Map(allTags.map((t) => [t, posts.filter((p) => p.tags.includes(t)).length])),
+		new Map(allTags.map((t) => [t, posts ? posts.filter((p) => p.tags.includes(t)).length : 0])),
 	);
 
 	function toggleTag(t: string) {
@@ -68,7 +97,7 @@
 					class:text-accent={filterState.year === "all"}
 					aria-pressed={filterState.year === "all"}
 				>
-					<span>全部</span><span>{posts.length}</span>
+					<span>全部</span><span>{posts ? posts.length : "…"}</span>
 				</button>
 			</li>
 			{#each years as y}
@@ -101,7 +130,7 @@
 						class:text-accent={filterState.tags.length === 0}
 						aria-pressed={filterState.tags.length === 0}
 					>
-						<span>全部</span><span>{posts.length}</span>
+						<span>全部</span><span>{posts ? posts.length : "…"}</span>
 					</button>
 				</li>
 				{#each allTags as t}

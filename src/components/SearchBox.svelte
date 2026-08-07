@@ -63,6 +63,7 @@
 		placeholder="搜索文章…"
 		class="w-full rounded-xl border border-hairline bg-paper-muted px-4 py-2.5 outline-none transition-colors focus:border-accent"
 		aria-label="搜索文章"
+		autofocus
 	/>
 	{#if busy}
 		<p class="mt-6 text-sm text-ink-tertiary">搜索中…</p>
