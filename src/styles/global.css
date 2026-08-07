@@ -1,0 +1,101 @@
+@import "tailwindcss";
+@import "@fontsource-variable/jetbrains-mono";
+@plugin "@tailwindcss/typography";
+
+/* ---------------------------------------------------------------------------
+ * 设计 Tokens（Tailwind v4 CSS-first）
+ * 生成 utilities：bg-paper / text-ink / border-hairline / text-accent …
+ * 暗色模式：.dark class 覆盖同名变量，utilities 自动跟随
+ * ------------------------------------------------------------------------- */
+@theme {
+	/* 纸色系（背景） */
+	--color-paper: #fafafa;
+	--color-paper-muted: #f4f4f5;
+	--color-paper-muted-dark: #161618;
+	--color-paper-dark: #0c0c0e;
+
+	/* 墨色系（文字/前景） */
+	--color-ink: #18181b;
+	--color-ink-secondary: #52525b;
+	--color-ink-tertiary: #8a8a93;
+	--color-ink-dark: #f4f4f5;
+	--color-ink-secondary-dark: #a1a1aa;
+	--color-ink-tertiary-dark: #71717a;
+
+	/* 发丝线（分割线/边框） */
+	--color-hairline: rgb(24 24 27 / 0.12);
+	--color-hairline-dark: rgb(244 244 245 / 0.14);
+
+	/* 主题色（保留旧博客紫 hue 250） */
+	--color-accent: hsl(250 84% 55%);
+	--color-accent-dark: hsl(250 84% 70%);
+
+	/* 字体 */
+	--font-sans:
+		-apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei",
+		"PingFang SC", "Noto Sans SC", sans-serif;
+	--font-mono:
+		"JetBrains Mono Variable", ui-monospace, SFMono-Regular, Menlo, Consolas,
+		monospace;
+}
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@layer base {
+	:root {
+		color-scheme: light;
+	}
+
+	:root.dark {
+		color-scheme: dark;
+		--color-paper: var(--color-paper-dark);
+		--color-paper-muted: var(--color-paper-muted-dark);
+		--color-ink: var(--color-ink-dark);
+		--color-ink-secondary: var(--color-ink-secondary-dark);
+		--color-ink-tertiary: var(--color-ink-tertiary-dark);
+		--color-hairline: var(--color-hairline-dark);
+		--color-accent: var(--color-accent-dark);
+	}
+
+	html {
+		scroll-behavior: smooth;
+	}
+
+	body {
+		@apply bg-paper text-ink font-sans antialiased;
+	}
+}
+
+/* ---------------------------------------------------------------------------
+ * SWUP 页面过渡（无刷新跳转）
+ * 机制：html 上切换 is-changing / is-leaving / is-animating 状态类，
+ * 容器 #swup.transition-main 执行淡入淡出 + 轻微位移动画
+ * ------------------------------------------------------------------------- */
+html.is-changing .transition-main {
+	transition:
+		opacity 200ms ease-out,
+		transform 200ms ease-out;
+}
+
+/* 旧页面离开：淡出并上移 */
+html.is-leaving .transition-main {
+	opacity: 0;
+	transform: translateY(-10px);
+}
+
+/* 新页面进入：从下淡入 */
+html.is-animating .transition-main {
+	opacity: 0;
+	transform: translateY(14px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+	html.is-changing .transition-main {
+		transition: none;
+	}
+	html.is-leaving .transition-main,
+	html.is-animating .transition-main {
+		opacity: 1;
+		transform: none;
+	}
+}
