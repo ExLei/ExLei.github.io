@@ -153,19 +153,21 @@
 	}
 }
 
-/* 固定导航/按钮不参与 root 位移动画：独立过渡组并禁用动画（保持静止） */
-[data-astro-transition-persist="nav"] {
-	view-transition-name: nav;
+/* 固定导航/按钮不参与 root 位移动画：fixed 元素自身进独立过渡组并禁用动画。
+ * 注意：view-transition-name 必须挂在 fixed 元素上（挂外层容器无效——
+ * fixed 子元素仍渲染在 root 快照中，会随 root 动画位移） */
+[data-astro-transition-persist="nav"] > .fixed {
+	view-transition-name: dock;
 }
 
-[data-astro-transition-persist="theme"] {
-	view-transition-name: theme;
+[data-astro-transition-persist="theme"] > .fixed {
+	view-transition-name: theme-toggle;
 }
 
-::view-transition-old(nav),
-::view-transition-new(nav),
-::view-transition-old(theme),
-::view-transition-new(theme) {
+::view-transition-old(dock),
+::view-transition-new(dock),
+::view-transition-old(theme-toggle),
+::view-transition-new(theme-toggle) {
 	animation: none;
 }
 

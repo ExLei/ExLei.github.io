@@ -28,12 +28,17 @@ const pageTitle = title ? `${title} · ${siteConfig.title}` : siteConfig.title;
 		<ClientRouter />
 		<script is:inline>
 			// 主题初始化（防闪烁）：localStorage > 系统偏好
+			// View Transitions 导航会重置 <html> 属性（dark 类丢失），导航后重新应用
 			(function () {
-				var saved = localStorage.getItem("theme");
-				var dark =
-					saved === "dark" ||
-					(saved !== "light" && matchMedia("(prefers-color-scheme: dark)").matches);
-				document.documentElement.classList.toggle("dark", dark);
+				function applyTheme() {
+					var saved = localStorage.getItem("theme");
+					var dark =
+						saved === "dark" ||
+						(saved !== "light" && matchMedia("(prefers-color-scheme: dark)").matches);
+					document.documentElement.classList.toggle("dark", dark);
+				}
+				applyTheme();
+				document.addEventListener("astro:page-load", applyTheme);
 			})();
 		</script>
 	</head>
