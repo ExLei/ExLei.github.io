@@ -1,0 +1,30 @@
+---
+import { withBase } from "../config";
+
+interface Props {
+	posts: Array<{ id: string; data: { title: string } }>;
+	current?: string;
+}
+
+const { posts, current } = Astro.props;
+---
+<aside class="sticky top-6 hidden w-56 shrink-0 xl:block" aria-label="文章列表">
+	<p class="font-mono text-xs uppercase tracking-wider text-ink-tertiary">文章</p>
+	<nav class="mt-3 max-h-[calc(100dvh-3rem)] overflow-y-auto" aria-label="文章列表">
+		<ul class="space-y-1 text-[13px]">
+			{posts.map((p) => (
+				<li>
+					<a
+						href={withBase(`/posts/${p.id}/`)}
+						class:list={[
+							p.id === current ? "text-accent font-semibold" : "text-ink-secondary",
+							"block py-0.5 leading-snug transition-colors hover:text-accent",
+						]}
+					>
+						{p.data.title}
+					</a>
+				</li>
+			))}
+		</ul>
+	</nav>
+</aside>

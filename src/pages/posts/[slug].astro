@@ -1,5 +1,6 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import ArticleTree from "../../components/ArticleTree.astro";
 import PostMeta from "../../components/PostMeta.astro";
 import Toc from "../../components/Toc.astro";
 import { getPost } from "../../lib/posts";
@@ -16,10 +17,14 @@ export async function getStaticPaths() {
 const { post } = Astro.props;
 const { Content, headings } = await render(post);
 const { prev, next } = (await getPost(post.id))!;
+const allPosts = (await getCollection("posts"))
+	.filter((p) => !p.data.draft)
+	.sort((a, b) => b.data.published.getTime() - a.data.published.getTime());
 ---
 <BaseLayout title={post.data.title} description={post.data.description}>
 	<main class="w-full px-4 pt-14 pb-12">
-		<div class="mx-auto flex w-full max-w-4xl items-start gap-10">
+		<div class="mx-auto flex w-full max-w-6xl items-start gap-10">
+			<ArticleTree posts={allPosts} current={post.id} />
 			<div class="min-w-0 flex-1">
 				{headings.length > 0 && (
 					<details class="mb-6 rounded-xl border border-hairline xl:hidden">
