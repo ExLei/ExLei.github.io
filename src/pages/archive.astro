@@ -1,69 +1,36 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import PostMeta from "../components/PostMeta.astro";
-import { getAllPosts, getCategories, getAllTags } from "../lib/posts";
-import { withBase } from "../config";
+import FilterPanel from "../components/FilterPanel.svelte";
+import PostList from "../components/PostList.svelte";
+import { getAllPosts } from "../lib/posts";
+import { readingTime } from "../lib/reading-time";
 
+/* 归档页：客户端列表 + 筛选 Dock 联动（与首页一致） */
 const posts = await getAllPosts();
-const categories = getCategories(posts);
-const tags = getAllTags(posts);
-const byYear = new Map<number, typeof posts>();
-for (const p of posts) {
-	const y = p.data.published.getFullYear();
-	byYear.set(y, [...(byYear.get(y) ?? []), p]);
-}
+const data = posts.map((p) => ({
+	slug: p.id,
+	title: p.data.title,
+	description: p.data.description,
+	published: p.data.published.toISOString(),
+	tags: p.data.tags,
+	category: p.data.category,
+	readingMinutes: readingTime(p.body ?? ""),
+}));
 ---
 <BaseLayout title="归档">
 	<main class="mx-auto w-full max-w-2xl px-4 pt-14 pb-12">
 		<h1 class="text-3xl font-bold tracking-tight">归档</h1>
 		<p class="mt-2 font-mono text-xs text-ink-tertiary">共 {posts.length} 篇文章</p>
 
-		<section class="mt-8 space-y-8" aria-label="按年份">
-			{[...byYear.entries()]
-				.sort((a, b) => b[0] - a[0])
-				.map(([year, list]) => (
-					<section>
-						<h2 class="font-mono text-sm text-ink-tertiary">
-							{year} · {list.length} 篇
-						</h2>
-						<ul class="mt-2">
-							{list.map((p) => (
-								<li class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 border-b border-hairline py-2">
-									<a href={withBase(`/posts/${p.id}/`)} class="transition-colors hover:text-accent">
-										{p.data.title}
-									</a>
-									<PostMeta post={p} />
-								</li>
-							))}
-						</ul>
-					</section>
-				))}
-		</section>
+		<details class="mt-8 mb-6 rounded-xl border border-hairline md:hidden">
+			<summary class="cursor-pointer select-none px-4 py-3 font-mono text-xs uppercase tracking-wider text-ink-tertiary">
+				筛选
+			</summary>
+			<div class="border-t border-hairline px-4 py-4">
+				<FilterPanel client:load />
+			</div>
+		</details>
 
-		{categories.length > 0 && (
-			<section class="mt-14">
-				<h2 class="font-mono text-sm uppercase tracking-wider text-ink-tertiary">分类</h2>
-				<div class="mt-3 flex flex-wrap gap-2">
-					{categories.map(([c, n]) => (
-						<span class="rounded-full border border-hairline px-3 py-1 text-sm">
-							{c} <span class="text-ink-tertiary">({n})</span>
-						</span>
-					))}
-				</div>
-			</section>
-		)}
-
-		{tags.length > 0 && (
-			<section class="mt-10">
-				<h2 class="font-mono text-sm uppercase tracking-wider text-ink-tertiary">标签</h2>
-				<div class="mt-3 flex flex-wrap gap-2">
-					{tags.map(([t, n]) => (
-						<span class="rounded-full border border-hairline px-3 py-1 text-sm">
-							{t} <span class="text-ink-tertiary">({n})</span>
-						</span>
-					))}
-				</div>
-			</section>
-		)}
+		<PostList client:load posts={data} />
 	</main>
 </BaseLayout>

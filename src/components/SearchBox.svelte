@@ -1,10 +1,19 @@
 <script lang="ts">
 	import { withBase } from "../config";
+	import { filterState } from "../lib/filter.svelte";
 
 	let query = $state("");
 	let results = $state<Array<{ url: string; title: string; excerpt: string }>>([]);
 	let busy = $state(false);
 	let index: Array<{ slug: string; title: string; description: string; tags: string[]; category: string; date: string; text: string }> | null = null;
+
+	/* 筛选 Dock 条件变化时重新搜索（建立响应式依赖） */
+	$effect(() => {
+		void filterState.sortBy;
+		void filterState.year;
+		void filterState.tags;
+		if (query.trim()) search();
+	});
 
 	function highlight(text: string, terms: string[]): string {
 		let out = text;
@@ -35,12 +44,25 @@
 			results = [];
 			return;
 		}
-		busy = true;
 		try {
 			index ??= await (await fetch(withBase("/search-index.json"))).json();
 			const terms = q.toLowerCase().split(/\s+/).filter(Boolean);
 			const hits = index
 				.filter((doc) => terms.every((t) => doc.text.toLowerCase().includes(t)))
+				.filter(
+					(doc) =>
+						filterState.year === "all" ||
+						new Date(doc.date).getFullYear() === filterState.year,
+				)
+				.filter(
+					(doc) =>
+						filterState.tags.length === 0 ||
+						filterState.tags.some((t) => doc.tags.includes(t)),
+				)
+				.sort((a, b) => {
+					const d = new Date(a.date).getTime() - new Date(b.date).getTime();
+					return filterState.sortBy === "newest" ? -d : d;
+				})
 				.slice(0, 10);
 			results = hits.map((doc) => ({
 				url: withBase(`/posts/${doc.slug}/`),

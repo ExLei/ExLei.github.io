@@ -1,13 +1,22 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import FilterPanel from "../components/FilterPanel.svelte";
 import SearchBox from "../components/SearchBox.svelte";
 ---
 <BaseLayout title="搜索">
 	<main class="mx-auto w-full max-w-2xl px-4 pt-14 pb-12">
 		<h1 class="text-3xl font-bold tracking-tight">搜索</h1>
-		<p class="mt-2 font-mono text-xs text-ink-tertiary">全文搜索</p>
+		<p class="mt-2 font-mono text-xs text-ink-tertiary">全文搜索 · 支持筛选 Dock 组合筛选</p>
 		<div class="mt-8">
 			<SearchBox client:load />
 		</div>
+		<details class="mt-6 rounded-xl border border-hairline md:hidden">
+			<summary class="cursor-pointer select-none px-4 py-3 font-mono text-xs uppercase tracking-wider text-ink-tertiary">
+				筛选
+			</summary>
+			<div class="border-t border-hairline px-4 py-4">
+				<FilterPanel client:load />
+			</div>
+		</details>
 	</main>
 </BaseLayout>

@@ -4,16 +4,34 @@ import Dock from "./Dock.svelte";
 import FilterDock from "./FilterDock.svelte";
 import SideNav from "./SideNav.svelte";
 import MobileTabBar from "./MobileTabBar.svelte";
+
+/* 筛选 Dock 仅首页/归档/搜索可用（SSR 首屏条件渲染，导航后由新文档决定——不 persist）
+ * Dock/SideNav/MobileTabBar 各自 persist：页面过渡时保留 DOM，配合 CSS 完全静止 */
+const showFilter = ["/", "/archive/", "/search/"].includes(Astro.url.pathname);
 ---
-<!-- transition:persist：页面过渡时保留导航 DOM，配合 CSS 使 Dock 静止 -->
-<div transition:persist="nav">
-	{navConfig.position === "bottom" ? (
-		<div class="fixed bottom-3 left-1/2 z-50 hidden -translate-x-1/2 items-end gap-3 md:flex">
-			<FilterDock client:load />
-			<Dock client:load />
+{navConfig.position === "bottom" ? (
+	<div
+		data-fixed-nav
+		class="fixed inset-x-0 bottom-3 z-50 hidden md:block"
+	>
+		<!-- 锚点居中：Dock 位置恒定，不受筛选 Dock 显隐影响 -->
+		<div class="relative mx-auto w-fit">
+			{showFilter && (
+				<div class="absolute bottom-0 right-full mr-3">
+					<FilterDock client:load />
+				</div>
+			)}
+			<div transition:persist="dockbar">
+				<Dock client:load />
+			</div>
 		</div>
-	) : (
+	</div>
+) : (
+	<div transition:persist="dockbar">
 		<SideNav client:load position={navConfig.position === "right" ? "right" : "left"} />
-	)}
+	</div>
+)}
+
+<div transition:persist="mobtab">
 	<MobileTabBar client:load />
 </div>

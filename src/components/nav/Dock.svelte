@@ -56,7 +56,7 @@
 	{#each navItems as item, i (item.href)}
 		<a
 			href={withBase(item.href)}
-			class="group relative flex flex-col items-center rounded-xl px-2 pb-1 pt-1.5 transition-transform duration-150 ease-out"
+			class="group relative flex flex-col items-center rounded-xl px-2 pb-1 pt-1.5 transition-colors duration-150 ease-out"
 			style="transform: scale({scales[i]})"
 			aria-label={item.label}
 			aria-current={activePath === withBase(item.href) ? "page" : undefined}

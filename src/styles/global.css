@@ -59,6 +59,15 @@
 
 	html {
 		scroll-behavior: smooth;
+		/* 恒定预留滚动条槽位：首页有滚动条、其他页无——避免视口宽度变化
+		 * 导致 fixed 居中元素（Dock）位置偏移 */
+		scrollbar-gutter: stable;
+		scrollbar-color: var(--color-ink-tertiary) transparent;
+		scrollbar-width: thin;
+	}
+
+	:root.dark {
+		scrollbar-color: var(--color-ink-tertiary-dark) transparent;
 	}
 
 	body {
@@ -184,11 +193,12 @@ main {
  * fixed 子元素仍渲染在 root 快照中会随 root 动画位移）。
  * 注意：Svelte 客户端组件被 <astro-island> 包装，fixed 元素在 island 内，
  * 不能只用直接子选择器 */
-[data-astro-transition-persist="nav"] > .fixed {
-	view-transition-name: dock;
+[data-fixed-nav] {
+	view-transition-name: dockbar;
 }
 
-[data-astro-transition-persist="nav"] astro-island > .fixed {
+[data-astro-transition-persist="dockbar"] astro-island > .fixed,
+[data-astro-transition-persist="mobtab"] astro-island > .fixed {
 	view-transition-name: nav-fixed;
 }
 
@@ -197,9 +207,9 @@ main {
 }
 
 /* 组层 + 快照层全部禁用动画：导航期间零位移、零缩放、零淡变 */
-::view-transition-group(dock),
-::view-transition-old(dock),
-::view-transition-new(dock),
+::view-transition-group(dockbar),
+::view-transition-old(dockbar),
+::view-transition-new(dockbar),
 ::view-transition-group(nav-fixed),
 ::view-transition-old(nav-fixed),
 ::view-transition-new(nav-fixed),
@@ -207,6 +217,14 @@ main {
 ::view-transition-old(theme-toggle),
 ::view-transition-new(theme-toggle) {
 	animation: none !important;
+}
+
+/* 旧快照隐藏：新旧内容有差异（如筛选 Dock 出现/消失、激活指示点移动）时
+ * 立即显示新内容，避免过渡结束时旧快照瞬间消失造成跳变 */
+::view-transition-old(dockbar),
+::view-transition-old(nav-fixed),
+::view-transition-old(theme-toggle) {
+	display: none;
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -40,7 +40,7 @@
 >
 	<button
 		onclick={() => (open = !open)}
-		class="group relative flex flex-col items-center rounded-xl px-2 pb-1 pt-1.5 transition-transform duration-150 ease-out hover:scale-110 active:scale-95"
+		class="group relative flex flex-col items-center rounded-xl px-2 pb-1 pt-1.5 transition-colors duration-150 ease-out"
 		aria-label="筛选"
 		aria-expanded={open}
 	>
