@@ -8,10 +8,10 @@
 	$effect(() => {
 		const update = () => (path = location.pathname);
 		update();
-		document.addEventListener("swup:page:view", update);
+		document.addEventListener("astro:page-load", update);
 		window.addEventListener("popstate", update);
 		return () => {
-			document.removeEventListener("swup:page:view", update);
+			document.removeEventListener("astro:page-load", update);
 			window.removeEventListener("popstate", update);
 		};
 	});

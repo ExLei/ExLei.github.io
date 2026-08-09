@@ -2,17 +2,17 @@
 	import Icon from "@iconify/svelte";
 	import { navItems, withBase } from "../../config";
 
-	/* 当前路径由客户端维护：SWUP 导航后通过 swup:page:view 事件更新，
-	   使 Dock 常驻（不随页面重挂载）且指示点保持正确 */
+	/* 当前路径由客户端维护：View Transitions 导航后通过 astro:page-load 事件更新，
+	使 Dock 常驻（不随页面重挂载）且指示点保持正确 */
 	let path = $state("");
 
 	$effect(() => {
 		const update = () => (path = location.pathname);
 		update();
-		document.addEventListener("swup:page:view", update);
+		document.addEventListener("astro:page-load", update);
 		window.addEventListener("popstate", update);
 		return () => {
-			document.removeEventListener("swup:page:view", update);
+			document.removeEventListener("astro:page-load", update);
 			window.removeEventListener("popstate", update);
 		};
 	});

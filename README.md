@@ -5,7 +5,7 @@
 ## 技术栈
 
 - **Astro 7** + **Tailwind CSS 4**（CSS-first 设计 tokens）+ **Svelte 5**
-- **SWUP** 无刷新页面过渡（Dock 导航等全局组件常驻）
+- **View Transitions** 无刷新页面过渡（Astro 内置，Dock 导航等全局组件常驻）
 - 客户端全文搜索（构建期生成 `search-index.json`，无外部依赖）
 - 首页筛选：底部 Dock 风格筛选器（排序 / 时间范围 / 标签多选）
 - 文章页目录（TOC）：sticky 跟随滚动 + scrollspy 高亮
@@ -31,7 +31,7 @@ src/
 ├── content.config.ts      # 文章 schema（见下）
 ├── content/posts/         # 文章（Markdown，frontmatter 见下）
 ├── layouts/
-│   └── BaseLayout.astro   # 全局布局：head、SWUP 容器、footer（含 RSS 入口）
+│   └── BaseLayout.astro   # 全局布局：head、ClientRouter、footer（含 RSS 入口）
 ├── components/
 │   ├── nav/
 │   │   ├── NavContainer.astro  # 底部导航组容器（筛选 Dock + 主 Dock 并排）
@@ -50,7 +50,7 @@ src/
 │   └── filter.svelte.ts    # 筛选状态共享 store（跨 island）
 ├── pages/                  # 首页 / 归档 / 关于 / 搜索 / 文章详情 / 404
 │   ├── rss.xml.ts          # RSS 订阅
-│   ├── sitemap-index.xml   # 由 @astrojs/sitemap 生成
+│   ├── sitemap.xml         # 自托管（静态页 + 文章，lastmod）
 │   ├── robots.txt.ts       # robots.txt
 │   └── search-index.json.ts # 搜索索引（构建期生成）
 └── styles/global.css       # Tailwind v4 设计 tokens（纸白/墨黑/hairline/accent）

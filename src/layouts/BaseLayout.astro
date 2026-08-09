@@ -1,5 +1,6 @@
 ---
 import "../styles/global.css";
+import { ClientRouter } from "astro:transitions";
 import NavContainer from "../components/nav/NavContainer.astro";
 import ThemeToggle from "../components/ThemeToggle.svelte";
 import { siteConfig } from "../config";
@@ -24,6 +25,7 @@ const pageTitle = title ? `${title} · ${siteConfig.title}` : siteConfig.title;
 		<meta name="generator" content={Astro.generator} />
 		<link rel="icon" type="image/svg+xml" href={new URL("/favicon.svg", Astro.site).pathname} />
 		<link rel="alternate" type="application/rss+xml" title={siteConfig.title} href={new URL("/rss.xml", Astro.site).pathname} />
+		<ClientRouter />
 		<script is:inline>
 			// 主题初始化（防闪烁）：localStorage > 系统偏好
 			(function () {
@@ -36,7 +38,7 @@ const pageTitle = title ? `${title} · ${siteConfig.title}` : siteConfig.title;
 		</script>
 	</head>
 	<body>
-		<div id="swup" class="transition-main">
+		<div>
 			<slot />
 			<footer>
 				<div
