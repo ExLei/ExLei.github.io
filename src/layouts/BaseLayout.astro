@@ -54,7 +54,9 @@ const pageTitle = title ? `${title} · ${siteConfig.title}` : siteConfig.title;
 				</div>
 			</footer>
 		</div>
-		<ThemeToggle client:load />
+		<div transition:persist="theme">
+			<ThemeToggle client:load />
+		</div>
 		<NavContainer />
 	</body>
 </html>

@@ -70,6 +70,12 @@
  * 提醒条（::: tip / warning / danger / note 容器指令）
  * editorial 风格：hairline 边框 + 左侧类型色条 + 等宽类型标签
  * ------------------------------------------------------------------------- */
+/* 大纲激活项：accent 色 + 左侧指示条（特异性高于 Tailwind utility，防覆盖） */
+.toc-link.text-accent {
+	color: var(--color-accent);
+	border-color: var(--color-accent);
+}
+
 .admonition {
 	@apply my-6 rounded-r-xl border border-hairline border-l-4 px-4 py-3 text-sm leading-relaxed;
 	background: var(--color-paper-muted);
@@ -145,6 +151,22 @@
 		opacity: 0;
 		transform: translateY(14px);
 	}
+}
+
+/* 固定导航/按钮不参与 root 位移动画：独立过渡组并禁用动画（保持静止） */
+[data-astro-transition-persist="nav"] {
+	view-transition-name: nav;
+}
+
+[data-astro-transition-persist="theme"] {
+	view-transition-name: theme;
+}
+
+::view-transition-old(nav),
+::view-transition-new(nav),
+::view-transition-old(theme),
+::view-transition-new(theme) {
+	animation: none;
 }
 
 @media (prefers-reduced-motion: reduce) {

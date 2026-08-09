@@ -35,7 +35,7 @@ const allPosts = (await getCollection("posts"))
 							<ul class="space-y-1 text-[13px]">
 								{headings.map((h) => (
 									<li class:list={[h.depth === 2 ? "pl-0" : h.depth === 3 ? "pl-4" : "pl-8"]}>
-										<a href={`#${h.slug}`} class="toc-link block py-0.5 leading-snug text-ink-secondary transition-colors hover:text-accent">
+										<a href={`#${h.slug}`} class="toc-link block border-l-2 border-transparent py-0.5 pl-2 leading-snug text-ink-secondary transition-colors hover:text-accent">
 											{h.text}
 										</a>
 									</li>
