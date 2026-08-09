@@ -138,47 +138,14 @@
 
 /* ---------------------------------------------------------------------------
  * 页面过渡（Astro 内置 View Transitions，<ClientRouter />）
- * 分层：
- * - root（背景）：仅淡入淡出，无 transform
- * - main（正文内容）：独立过渡组，保留位移动画
- * - 固定导航/按钮：独立过渡组 + 全部动画禁用（完全静止）
+ * root 整体淡入淡出 + 位移动画（固定元素已独立过渡组，不受 root 动画影响）
  * ------------------------------------------------------------------------- */
-main {
-	view-transition-name: content;
-}
-
 ::view-transition-old(root) {
-	animation: vt-fade-out 200ms ease-out both;
-}
-
-::view-transition-new(root) {
-	animation: vt-fade-in 200ms ease-out both;
-}
-
-::view-transition-old(content) {
 	animation: vt-leave 200ms ease-out both;
 }
 
-::view-transition-new(content) {
+::view-transition-new(root) {
 	animation: vt-enter 200ms ease-out both;
-}
-
-/* 组层禁用 UA 默认动画：old/new 快照尺寸不同时默认会对组做 scale 插值
- * （表现为原页面“向外缩放”）——只保留 old/new 自身的位移淡变 */
-::view-transition-group(content) {
-	animation: none;
-}
-
-@keyframes vt-fade-out {
-	to {
-		opacity: 0;
-	}
-}
-
-@keyframes vt-fade-in {
-	from {
-		opacity: 0;
-	}
 }
 
 @keyframes vt-leave {
