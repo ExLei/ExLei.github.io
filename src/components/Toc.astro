@@ -10,21 +10,21 @@ const { headings } = Astro.props;
 {
 	headings.length > 0 && (
 		<aside class="sticky top-6 hidden w-48 shrink-0 xl:block" aria-label="文章大纲">
-			<div class="max-h-[calc(100dvh-3rem)] overflow-y-auto rounded-xl border border-hairline bg-paper p-4">
-				<p class="font-mono text-xs uppercase tracking-wider text-ink-tertiary">目录</p>
-				<ul id="toc-nav" class="mt-4 space-y-2 text-sm">
+			<p class="font-mono text-xs uppercase tracking-wider text-ink-tertiary">目录</p>
+			<nav class="mt-3 max-h-[calc(100dvh-3rem)] overflow-y-auto" aria-label="文章大纲">
+				<ul id="toc-nav" class="space-y-1 text-[13px]">
 					{headings.map((h) => (
 						<li class:list={[h.depth === 2 ? "pl-0" : h.depth === 3 ? "pl-4" : "pl-8"]}>
 							<a
 								href={`#${h.slug}`}
-								class="toc-link block border-l-2 border-transparent py-1 pl-2 text-ink-secondary transition-colors hover:text-accent"
+								class="toc-link block py-0.5 leading-snug text-ink-secondary transition-colors hover:text-accent"
 							>
 								{h.text}
 							</a>
 						</li>
 					))}
 				</ul>
-			</div>
+			</nav>
 		</aside>
 	)
 }
@@ -33,7 +33,7 @@ const { headings } = Astro.props;
 	// 滚动定位高亮（scrollspy）：当前可见小节对应的大纲项高亮
 	// 通过 astro:page-load 重初始化，兼容 SWUP 无刷新导航
 	function initScrollspy() {
-		document.querySelectorAll(".toc-link.text-accent").forEach((a) => a.classList.remove("text-accent", "border-accent"));
+		document.querySelectorAll(".toc-link.text-accent").forEach((a) => a.classList.remove("text-accent", "font-semibold"));
 		const article = document.querySelector("article");
 		const links = [...document.querySelectorAll(".toc-link")];
 		if (!article || links.length === 0) return;
@@ -57,7 +57,7 @@ const { headings } = Astro.props;
 						document.querySelectorAll(".toc-link").forEach((a) => {
 							const active = a.getAttribute("href") === `#${current}`;
 							a.classList.toggle("text-accent", active);
-							a.classList.toggle("border-accent", active);
+							a.classList.toggle("font-semibold", active);
 						});
 					}
 				}

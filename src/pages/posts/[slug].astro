@@ -27,10 +27,10 @@ const { prev, next } = (await getPost(post.id))!;
 							目录 · {headings.length} 节
 						</summary>
 						<nav class="border-t border-hairline px-4 py-3" aria-label="文章大纲">
-							<ul class="space-y-1.5 text-sm">
+							<ul class="space-y-1 text-[13px]">
 								{headings.map((h) => (
 									<li class:list={[h.depth === 2 ? "pl-0" : h.depth === 3 ? "pl-4" : "pl-8"]}>
-										<a href={`#${h.slug}`} class="toc-link text-ink-secondary transition-colors hover:text-accent">
+										<a href={`#${h.slug}`} class="toc-link block py-0.5 leading-snug text-ink-secondary transition-colors hover:text-accent">
 											{h.text}
 										</a>
 									</li>
