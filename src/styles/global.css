@@ -67,6 +67,61 @@
 }
 
 /* ---------------------------------------------------------------------------
+ * 提醒条（::: tip / warning / danger / note 容器指令）
+ * editorial 风格：hairline 边框 + 左侧类型色条 + 等宽类型标签
+ * ------------------------------------------------------------------------- */
+.admonition {
+	@apply my-6 rounded-r-xl border border-hairline border-l-4 px-4 py-3 text-sm leading-relaxed;
+	background: var(--color-paper-muted);
+}
+
+.admonition > :first-child {
+	margin-top: 0;
+}
+
+.admonition > :last-child {
+	margin-bottom: 0;
+}
+
+.admonition-title {
+	@apply mb-2 font-mono text-xs font-semibold uppercase tracking-wider;
+}
+
+.admonition-tip {
+	border-left-color: var(--color-accent);
+}
+
+.admonition-tip .admonition-title {
+	color: var(--color-accent);
+}
+
+.admonition-warning {
+	border-left-color: #d97706;
+}
+
+.admonition-warning .admonition-title {
+	color: #d97706;
+}
+
+.admonition-danger {
+	border-left-color: #dc2626;
+}
+
+.admonition-danger .admonition-title {
+	color: #dc2626;
+}
+
+.admonition-note,
+.admonition-info {
+	border-left-color: #2563eb;
+}
+
+.admonition-note .admonition-title,
+.admonition-info .admonition-title {
+	color: #2563eb;
+}
+
+/* ---------------------------------------------------------------------------
  * SWUP 页面过渡（无刷新跳转）
  * 机制：html 上切换 is-changing / is-leaving / is-animating 状态类，
  * 容器 #swup.transition-main 执行淡入淡出 + 轻微位移动画
