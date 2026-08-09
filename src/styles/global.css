@@ -129,14 +129,41 @@
 
 /* ---------------------------------------------------------------------------
  * 页面过渡（Astro 内置 View Transitions，<ClientRouter />）
- * 淡出上移 + 淡入上浮，效果与原 SWUP 一致
+ * 分层：
+ * - root（背景）：仅淡入淡出，无 transform
+ * - main（正文内容）：独立过渡组，保留位移动画
+ * - 固定导航/按钮：独立过渡组 + 全部动画禁用（完全静止）
  * ------------------------------------------------------------------------- */
+main {
+	view-transition-name: content;
+}
+
 ::view-transition-old(root) {
-	animation: vt-leave 200ms ease-out both;
+	animation: vt-fade-out 200ms ease-out both;
 }
 
 ::view-transition-new(root) {
+	animation: vt-fade-in 200ms ease-out both;
+}
+
+::view-transition-old(content) {
+	animation: vt-leave 200ms ease-out both;
+}
+
+::view-transition-new(content) {
 	animation: vt-enter 200ms ease-out both;
+}
+
+@keyframes vt-fade-out {
+	to {
+		opacity: 0;
+	}
+}
+
+@keyframes vt-fade-in {
+	from {
+		opacity: 0;
+	}
 }
 
 @keyframes vt-leave {
@@ -153,22 +180,33 @@
 	}
 }
 
-/* 固定导航/按钮不参与 root 位移动画：fixed 元素自身进独立过渡组并禁用动画。
- * 注意：view-transition-name 必须挂在 fixed 元素上（挂外层容器无效——
- * fixed 子元素仍渲染在 root 快照中，会随 root 动画位移） */
+/* 固定导航/按钮：view-transition-name 必须挂 fixed 元素自身（挂外层容器无效——
+ * fixed 子元素仍渲染在 root 快照中会随 root 动画位移）。
+ * 注意：Svelte 客户端组件被 <astro-island> 包装，fixed 元素在 island 内，
+ * 不能只用直接子选择器 */
 [data-astro-transition-persist="nav"] > .fixed {
 	view-transition-name: dock;
 }
 
-[data-astro-transition-persist="theme"] > .fixed {
+[data-astro-transition-persist="nav"] astro-island > .fixed {
+	view-transition-name: nav-fixed;
+}
+
+[data-astro-transition-persist="theme"] astro-island > .fixed {
 	view-transition-name: theme-toggle;
 }
 
+/* 组层 + 快照层全部禁用动画：导航期间零位移、零缩放、零淡变 */
+::view-transition-group(dock),
 ::view-transition-old(dock),
 ::view-transition-new(dock),
+::view-transition-group(nav-fixed),
+::view-transition-old(nav-fixed),
+::view-transition-new(nav-fixed),
+::view-transition-group(theme-toggle),
 ::view-transition-old(theme-toggle),
 ::view-transition-new(theme-toggle) {
-	animation: none;
+	animation: none !important;
 }
 
 @media (prefers-reduced-motion: reduce) {
