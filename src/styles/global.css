@@ -163,6 +163,12 @@ main {
 	animation: vt-enter 200ms ease-out both;
 }
 
+/* 组层禁用 UA 默认动画：old/new 快照尺寸不同时默认会对组做 scale 插值
+ * （表现为原页面“向外缩放”）——只保留 old/new 自身的位移淡变 */
+::view-transition-group(content) {
+	animation: none;
+}
+
 @keyframes vt-fade-out {
 	to {
 		opacity: 0;

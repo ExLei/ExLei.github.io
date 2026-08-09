@@ -2,11 +2,13 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import FilterPanel from "../components/FilterPanel.svelte";
 import PostList from "../components/PostList.svelte";
-import { getAllPosts } from "../lib/posts";
+import { getAllPosts, getCategories, getAllTags } from "../lib/posts";
 import { readingTime } from "../lib/reading-time";
 
-/* 归档页：客户端列表 + 筛选 Dock 联动（与首页一致） */
+/* 归档页：按年分组（与筛选 Dock 联动），底部保留分类/标签区块 */
 const posts = await getAllPosts();
+const categories = getCategories(posts);
+const tags = getAllTags(posts);
 const data = posts.map((p) => ({
 	slug: p.id,
 	title: p.data.title,
@@ -22,7 +24,7 @@ const data = posts.map((p) => ({
 		<h1 class="text-3xl font-bold tracking-tight">归档</h1>
 		<p class="mt-2 font-mono text-xs text-ink-tertiary">共 {posts.length} 篇文章</p>
 
-		<details class="mt-8 mb-6 rounded-xl border border-hairline md:hidden">
+		<details class="mt-8 mb-2 rounded-xl border border-hairline md:hidden">
 			<summary class="cursor-pointer select-none px-4 py-3 font-mono text-xs uppercase tracking-wider text-ink-tertiary">
 				筛选
 			</summary>
@@ -31,6 +33,34 @@ const data = posts.map((p) => ({
 			</div>
 		</details>
 
-		<PostList client:load posts={data} />
+		<div class="mt-8">
+			<PostList client:load posts={data} groupByYear />
+		</div>
+
+		{categories.length > 0 && (
+			<section class="mt-14">
+				<h2 class="font-mono text-sm uppercase tracking-wider text-ink-tertiary">分类</h2>
+				<div class="mt-3 flex flex-wrap gap-2">
+					{categories.map(([c, n]) => (
+						<span class="rounded-full border border-hairline px-3 py-1 text-sm">
+							{c} <span class="text-ink-tertiary">({n})</span>
+						</span>
+					))}
+				</div>
+			</section>
+		)}
+
+		{tags.length > 0 && (
+			<section class="mt-10">
+				<h2 class="font-mono text-sm uppercase tracking-wider text-ink-tertiary">标签</h2>
+				<div class="mt-3 flex flex-wrap gap-2">
+					{tags.map(([t, n]) => (
+						<span class="rounded-full border border-hairline px-3 py-1 text-sm">
+							{t} <span class="text-ink-tertiary">({n})</span>
+						</span>
+					))}
+				</div>
+			</section>
+		)}
 	</main>
 </BaseLayout>
