@@ -2,6 +2,9 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import FilterPanel from "../components/FilterPanel.svelte";
 import SearchBox from "../components/SearchBox.svelte";
+import { getAllPostData } from "../lib/posts";
+
+const data = await getAllPostData();
 ---
 <BaseLayout title="搜索">
 	<main class="mx-auto w-full max-w-2xl px-4 pt-14 pb-12">
@@ -15,7 +18,7 @@ import SearchBox from "../components/SearchBox.svelte";
 				筛选
 			</summary>
 			<div class="border-t border-hairline px-4 py-4">
-				<FilterPanel client:load />
+				<FilterPanel client:load posts={data} />
 			</div>
 		</details>
 	</main>

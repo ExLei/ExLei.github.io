@@ -1,11 +1,12 @@
 <script lang="ts">
 	import { withBase } from "../config";
 	import { filterState } from "../lib/filter.svelte";
+	import type { SearchIndexEntry } from "../lib/posts";
 
 	let query = $state("");
 	let results = $state<Array<{ url: string; title: string; excerpt: string }>>([]);
 	let busy = $state(false);
-	let index: Array<{ slug: string; title: string; description: string; tags: string[]; category: string; date: string; text: string }> | null = null;
+	let index: SearchIndexEntry[] | null = null;
 
 	/* 筛选 Dock 条件变化时重新搜索（建立响应式依赖） */
 	$effect(() => {
@@ -52,7 +53,7 @@
 				.filter(
 					(doc) =>
 						filterState.year === "all" ||
-						new Date(doc.date).getFullYear() === filterState.year,
+						new Date(doc.published).getFullYear() === filterState.year,
 				)
 				.filter(
 					(doc) =>
@@ -60,7 +61,7 @@
 						filterState.tags.some((t) => doc.tags.includes(t)),
 				)
 				.sort((a, b) => {
-					const d = new Date(a.date).getTime() - new Date(b.date).getTime();
+					const d = new Date(a.published).getTime() - new Date(b.date).getTime();
 					return filterState.sortBy === "newest" ? -d : d;
 				})
 				.slice(0, 10);

@@ -2,22 +2,13 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import FilterPanel from "../components/FilterPanel.svelte";
 import PostList from "../components/PostList.svelte";
-import { getAllPosts, getCategories, getAllTags } from "../lib/posts";
-import { readingTime } from "../lib/reading-time";
+import { getAllPosts, getCategories, getAllTags, getAllPostData } from "../lib/posts";
 
 /* 归档页：按年分组（与筛选 Dock 联动），底部保留分类/标签区块 */
 const posts = await getAllPosts();
 const categories = getCategories(posts);
 const tags = getAllTags(posts);
-const data = posts.map((p) => ({
-	slug: p.id,
-	title: p.data.title,
-	description: p.data.description,
-	published: p.data.published.toISOString(),
-	tags: p.data.tags,
-	category: p.data.category,
-	readingMinutes: readingTime(p.body ?? ""),
-}));
+const data = await getAllPostData();
 ---
 <BaseLayout title="归档">
 	<main class="mx-auto w-full max-w-2xl px-4 pt-14 pb-12">

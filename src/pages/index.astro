@@ -2,20 +2,10 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import FilterPanel from "../components/FilterPanel.svelte";
 import PostList from "../components/PostList.svelte";
-import { getAllPosts } from "../lib/posts";
-import { readingTime } from "../lib/reading-time";
+import { getAllPostData } from "../lib/posts";
 import { siteConfig } from "../config";
 
-const posts = await getAllPosts();
-const data = posts.map((p) => ({
-	slug: p.id,
-	title: p.data.title,
-	description: p.data.description,
-	published: p.data.published.toISOString(),
-	tags: p.data.tags,
-	category: p.data.category,
-	readingMinutes: readingTime(p.body ?? ""),
-}));
+const data = await getAllPostData();
 ---
 <BaseLayout>
 	<main class="w-full px-4 pt-14 pb-12">
