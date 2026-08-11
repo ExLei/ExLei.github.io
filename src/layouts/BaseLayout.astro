@@ -27,8 +27,8 @@ const pageTitle = title ? `${title} · ${siteConfig.title}` : siteConfig.title;
 		<link rel="alternate" type="application/rss+xml" title={siteConfig.title} href={new URL("/rss.xml", Astro.site).pathname} />
 		<ClientRouter />
 		<script is:inline>
-			// 主题初始化（防闪烁）：localStorage > 系统偏好
-			// View Transitions 导航会重置 <html> 属性（dark 类丢失），导航后重新应用
+			// 主题「决策者」：首屏防闪烁（head 先行）+ View Transitions 导航重置
+			// <html> 属性后重新应用。lib/theme.svelte.ts 从 DOM 单向同步状态。
 			(function () {
 				function applyTheme() {
 					var saved = localStorage.getItem("theme");
