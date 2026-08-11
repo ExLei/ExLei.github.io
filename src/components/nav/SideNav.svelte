@@ -1,21 +1,9 @@
 <script lang="ts">
 	import Icon from "@iconify/svelte";
 	import { navItems, withBase } from "../../config";
+	import { getActivePath } from "../../lib/nav.svelte";
 
 	let { position = "left" }: { position?: "left" | "right" } = $props();
-
-	let path = $state("");
-	$effect(() => {
-		const update = () => (path = location.pathname);
-		update();
-		document.addEventListener("astro:page-load", update);
-		window.addEventListener("popstate", update);
-		return () => {
-			document.removeEventListener("astro:page-load", update);
-			window.removeEventListener("popstate", update);
-		};
-	});
-	let activePath = $derived(path.endsWith("/") ? path : path + "/");
 </script>
 
 <nav
@@ -30,13 +18,13 @@
 			href={withBase(item.href)}
 			class="group flex items-center gap-3 rounded-xl px-3 py-2 transition-colors hover:bg-paper-muted"
 			aria-label={item.label}
-			aria-current={activePath === withBase(item.href) ? "page" : undefined}
+			aria-current={getActivePath() === withBase(item.href) ? "page" : undefined}
 		>
 			<Icon icon={item.icon} class="size-5" />
 			<span class="text-sm">
 				{item.label}
 			</span>
-			{#if activePath === withBase(item.href)}
+			{#if getActivePath() === withBase(item.href)}
 				<span class="ml-1 size-1.5 rounded-full bg-accent"></span>
 			{/if}
 		</a>

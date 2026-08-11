@@ -1,23 +1,9 @@
 <script lang="ts">
 	import Icon from "@iconify/svelte";
 	import { navItems, withBase } from "../../config";
+	import { getActivePath } from "../../lib/nav.svelte";
 
-	/* 当前路径由客户端维护：View Transitions 导航后通过 astro:page-load 事件更新，
-	使 Dock 常驻（不随页面重挂载）且指示点保持正确 */
-	let path = $state("");
-
-	$effect(() => {
-		const update = () => (path = location.pathname);
-		update();
-		document.addEventListener("astro:page-load", update);
-		window.addEventListener("popstate", update);
-		return () => {
-			document.removeEventListener("astro:page-load", update);
-			window.removeEventListener("popstate", update);
-		};
-	});
-
-	let activePath = $derived(path.endsWith("/") ? path : path + "/");
+	/* 路径状态由 lib/nav.svelte.ts 维护（astro:page-load/popstate 监听单点） */
 
 	let dockEl = $state<HTMLElement>();
 	let scales = $state<number[]>(navItems.map(() => 1));
@@ -59,7 +45,7 @@
 			class="group relative flex flex-col items-center rounded-xl px-2 pb-1 pt-1.5 transition-colors duration-150 ease-out"
 			style="transform: scale({scales[i]})"
 			aria-label={item.label}
-			aria-current={activePath === withBase(item.href) ? "page" : undefined}
+			aria-current={getActivePath() === withBase(item.href) ? "page" : undefined}
 		>
 			<Icon icon={item.icon} class="size-6" />
 			<span
@@ -68,7 +54,7 @@
 				{item.label}
 			</span>
 			<span
-				class="mt-1 size-1 rounded-full {activePath === withBase(item.href)
+				class="mt-1 size-1 rounded-full {getActivePath() === withBase(item.href)
 					? 'bg-accent'
 					: 'bg-transparent'}"
 			></span>

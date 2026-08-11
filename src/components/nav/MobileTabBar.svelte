@@ -1,19 +1,7 @@
 <script lang="ts">
 	import Icon from "@iconify/svelte";
 	import { navItems, withBase } from "../../config";
-
-	let path = $state("");
-	$effect(() => {
-		const update = () => (path = location.pathname);
-		update();
-		document.addEventListener("astro:page-load", update);
-		window.addEventListener("popstate", update);
-		return () => {
-			document.removeEventListener("astro:page-load", update);
-			window.removeEventListener("popstate", update);
-		};
-	});
-	let activePath = $derived(path.endsWith("/") ? path : path + "/");
+	import { getActivePath } from "../../lib/nav.svelte";
 </script>
 
 <nav
@@ -25,13 +13,13 @@
 			href={withBase(item.href)}
 			class="flex flex-col items-center gap-0.5 px-3 py-2 text-xs"
 			aria-label={item.label}
-			aria-current={activePath === withBase(item.href) ? "page" : undefined}
+			aria-current={getActivePath() === withBase(item.href) ? "page" : undefined}
 		>
 			<Icon
 				icon={item.icon}
-				class="size-5 {activePath === withBase(item.href) ? 'text-accent' : ''}"
+				class="size-5 {getActivePath() === withBase(item.href) ? 'text-accent' : ''}"
 			/>
-			<span class={activePath === withBase(item.href) ? "text-accent" : "text-ink-secondary"}>
+			<span class={getActivePath() === withBase(item.href) ? "text-accent" : "text-ink-secondary"}>
 				{item.label}
 			</span>
 		</a>
