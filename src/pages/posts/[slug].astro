@@ -3,23 +3,19 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 import ArticleTree from "../../components/ArticleTree.astro";
 import PostMeta from "../../components/PostMeta.astro";
 import Toc from "../../components/Toc.astro";
-import { getPost } from "../../lib/posts";
+import { getPost, getAllPosts } from "../../lib/posts";
 import { withBase } from "../../config";
-import { getCollection, render } from "astro:content";
+import { render } from "astro:content";
 
 export async function getStaticPaths() {
-	const posts = await getCollection("posts");
-	return posts
-		.filter((p) => !p.data.draft)
-		.map((p) => ({ params: { slug: p.id }, props: { post: p } }));
+	const posts = await getAllPosts();
+	return posts.map((p) => ({ params: { slug: p.id }, props: { post: p } }));
 }
 
 const { post } = Astro.props;
 const { Content, headings } = await render(post);
 const { prev, next } = (await getPost(post.id))!;
-const allPosts = (await getCollection("posts"))
-	.filter((p) => !p.data.draft)
-	.sort((a, b) => b.data.published.getTime() - a.data.published.getTime());
+const allPosts = await getAllPosts();
 ---
 <BaseLayout title={post.data.title} description={post.data.description}>
 	<main class="w-full px-4 pt-14 pb-12">
