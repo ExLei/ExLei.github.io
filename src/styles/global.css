@@ -206,3 +206,102 @@
 		animation: none;
 	}
 }
+/* ---------------------------------------------------------------------------
+ * 正文图片（文章页）
+ * - 统一列宽：所有图片占满正文容器（窄图放大，接受轻微模糊）
+ * - 灯箱：<dialog> 全屏遮罩 + 原图 + 前后导航
+ * ------------------------------------------------------------------------- */
+.prose img {
+	width: 100%;
+}
+
+.prose a.img-lightbox-link {
+	display: block;
+}
+
+dialog.lightbox {
+	width: 100vw;
+	height: 100vh;
+	max-width: 100vw;
+	max-height: 100vh;
+	margin: 0;
+	border: 0;
+	padding: 0;
+	background: transparent;
+}
+
+dialog.lightbox::backdrop {
+	background: rgb(0 0 0 / 0.85);
+}
+
+dialog.lightbox .lightbox-frame {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	height: 100%;
+}
+
+dialog.lightbox img {
+	max-width: 90vw;
+	max-height: 90vh;
+	width: auto;
+	height: auto;
+}
+
+.lightbox-btn {
+	position: absolute;
+	z-index: 1;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 44px;
+	height: 44px;
+	border: 1px solid rgb(255 255 255 / 0.25);
+	border-radius: 9999px;
+	background: rgb(0 0 0 / 0.45);
+	color: #fff;
+	font-size: 24px;
+	line-height: 1;
+	cursor: pointer;
+}
+
+.lightbox-btn:hover {
+	background: rgb(0 0 0 / 0.7);
+}
+
+.lightbox-btn[disabled] {
+	opacity: 0.3;
+	cursor: default;
+}
+
+dialog.lightbox [hidden] {
+	display: none;
+}
+
+.lightbox-close {
+	top: 16px;
+	right: 16px;
+}
+
+.lightbox-prev {
+	top: 50%;
+	left: 16px;
+	transform: translateY(-50%);
+}
+
+.lightbox-next {
+	top: 50%;
+	right: 16px;
+	transform: translateY(-50%);
+}
+
+.lightbox-counter {
+	position: absolute;
+	bottom: 18px;
+	left: 50%;
+	transform: translateX(-50%);
+	color: #fff;
+	font-family: var(--font-mono);
+	font-size: 13px;
+}

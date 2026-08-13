@@ -3,6 +3,9 @@ import tailwindcss from "@tailwindcss/vite";
 import { satteri } from "@astrojs/markdown-satteri";
 import { defineConfig } from "astro/config";
 import { admonition } from "./src/plugins/admonition.mjs";
+import { imageLightboxHast, imageLightboxMdast } from "./src/plugins/image-lightbox.mjs";
+
+
 
 // https://astro.build/config
 export default defineConfig({
@@ -10,10 +13,11 @@ export default defineConfig({
 	base: "/",
 	trailingSlash: "always",
 	markdown: {
-		processor: satteri({
-			features: { directive: true },
-			mdastPlugins: [admonition],
-		}),
+	processor: satteri({
+		features: { directive: true },
+		mdastPlugins: [admonition, imageLightboxMdast],
+		hastPlugins: [imageLightboxHast],
+	}),
 	},
 	integrations: [svelte()],
 	vite: {
