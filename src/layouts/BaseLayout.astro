@@ -29,6 +29,8 @@ const pageTitle = title ? `${title} · ${siteConfig.title}` : siteConfig.title;
 		<script is:inline>
 			// 主题「决策者」：首屏防闪烁（head 先行）+ View Transitions 导航重置
 			// <html> 属性后重新应用。lib/theme.svelte.ts 从 DOM 单向同步状态。
+			// ⚠ applyTheme 是 lib/theme-logic.ts resolveTheme 的镜像（is:inline 无法 import）。
+			// 纯函数测试只钉住 resolveTheme 本体；inline 镜像的漂移无构建期信号，属人工同步风险。
 			(function () {
 				function applyTheme() {
 					var saved = localStorage.getItem("theme");

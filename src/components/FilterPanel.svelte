@@ -1,23 +1,10 @@
 <script lang="ts">
-	import { filterState, type PostData } from "../lib/filter.svelte";
+	import { filterState } from "../lib/filter.svelte";
 	import { aggregateTags } from "../lib/aggregate";
-	import { withBase } from "../config";
+	import type { PostData } from "../lib/post-data";
 
-	/* 文章列表：优先使用页面传入的 props（单一映射来源）；
-	 * 全局场景（筛选 Dock）无 props 时 fetch search-index.json（形状已统一，直接可用） */
+	/* 文章列表：props 唯一数据源（页面构建期传入；FilterDock 场景由 NavContainer 透传） */
 	let { posts = [] }: { posts?: PostData[] } = $props();
-
-	$effect(() => {
-		if (posts.length > 0) return;
-		fetch(withBase("/search-index.json"))
-			.then((r) => r.json())
-			.then((d: PostData[]) => {
-				posts = d;
-			})
-			.catch(() => {
-				posts = [];
-			});
-	});
 
 	const years = $derived(
 		[...new Set(posts.map((p) => new Date(p.published).getFullYear()))].sort((a, b) => b - a),

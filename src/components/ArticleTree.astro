@@ -1,5 +1,6 @@
 ---
-import { withBase } from "../config";
+import { postUrl } from "../config";
+
 
 interface Props {
 	posts: Array<{ id: string; data: { title: string } }>;
@@ -15,7 +16,7 @@ const { posts, current } = Astro.props;
 			{posts.map((p) => (
 				<li>
 					<a
-						href={withBase(`/posts/${p.id}/`)}
+						href={postUrl(p.id)}
 						class:list={[
 							p.id === current ? "text-accent font-semibold" : "text-ink-secondary",
 							"block py-0.5 leading-snug transition-colors hover:text-accent",

@@ -1,76 +1,91 @@
 ---
 import type { MarkdownHeading } from "astro";
+import TocList from "./TocList.astro";
 
 interface Props {
 	headings: MarkdownHeading[];
+	/** aside = 桌面右侧固定列；collapsible = 移动端 <details> 折叠块 */
+	variant: "aside" | "collapsible";
 }
 
-const { headings } = Astro.props;
+const { headings, variant } = Astro.props;
 ---
 {
-	headings.length > 0 && (
-		<aside class="sticky top-6 hidden w-48 shrink-0 xl:block" aria-label="文章大纲">
-			<p class="font-mono text-xs uppercase tracking-wider text-ink-tertiary">目录</p>
-			<nav class="mt-3 max-h-[calc(100dvh-3rem)] overflow-y-auto" aria-label="文章大纲">
-				<ul id="toc-nav" class="space-y-1 text-[13px]">
-					{headings.map((h) => (
-						<li class:list={[h.depth === 2 ? "pl-0" : h.depth === 3 ? "pl-4" : "pl-8"]}>
-							<a
-								href={`#${h.slug}`}
-								class="toc-link block border-l-2 border-transparent py-0.5 pl-2 leading-snug text-ink-secondary transition-colors hover:text-accent"
-							>
-								{h.text}
-							</a>
-						</li>
-					))}
-				</ul>
-			</nav>
-		</aside>
-	)
+	headings.length > 0 &&
+		(variant === "aside" ? (
+			<aside class="sticky top-6 hidden w-48 shrink-0 xl:block" aria-label="文章大纲">
+				<p class="font-mono text-xs uppercase tracking-wider text-ink-tertiary">目录</p>
+				<nav class="mt-3 max-h-[calc(100dvh-3rem)] overflow-y-auto" aria-label="文章大纲">
+					<TocList headings={headings} />
+				</nav>
+			</aside>
+		) : (
+			<details class="mb-6 rounded-xl border border-hairline xl:hidden">
+				<summary class="cursor-pointer select-none px-4 py-3 font-mono text-xs uppercase tracking-wider text-ink-tertiary">
+					目录 · {headings.length} 节
+				</summary>
+				<nav class="border-t border-hairline px-4 py-3" aria-label="文章大纲">
+					<TocList headings={headings} />
+				</nav>
+			</details>
+		))
 }
-
 <script>
-	// 滚动定位高亮（scrollspy）：当前可见小节对应的大纲项高亮
-	// 通过 astro:page-load 重初始化，兼容 SWUP 无刷新导航
-	function initScrollspy() {
-		document.querySelectorAll(".toc-link.text-accent").forEach((a) => a.classList.remove("text-accent", "font-semibold", "border-accent"));
-		const article = document.querySelector("article");
-		const links = [...document.querySelectorAll(".toc-link")];
-		if (!article || links.length === 0) return;
+	// 滚动定位高亮（scrollspy）：当前可见小节对应的大纲项高亮。
+	// 查询范围 = 本组件各 variant 的 [data-toc] 容器（不再全局猜 .toc-link）。
+	// astro:page-load 重初始化，兼容 View Transitions 无刷新导航；
+	// 每次重初始化前断开旧 observer，避免旧文档的 headings 被观察者永久持有。
+	let activeObserver: IntersectionObserver | null = null;
 
-		const map = new Map();
-		links.forEach((a) => {
-			const href = a.getAttribute("href") ?? "";
-			if (href.startsWith("#")) {
-				const target = document.getElementById(href.slice(1));
-				if (target) map.set(href.slice(1), a);
-			}
+	function initScrollspy() {
+		const containers = [...document.querySelectorAll("[data-toc]")];
+		const article = document.querySelector("article");
+		if (!article || containers.length === 0) return;
+
+		// 同一 id 可能在多个容器中出现（aside + collapsible 同页），全部联动高亮
+		const linksById = new Map<string, Element[]>();
+		containers.forEach((ul) => {
+			ul.querySelectorAll(".toc-link").forEach((a) => {
+				const href = a.getAttribute("href") ?? "";
+				if (!href.startsWith("#")) return;
+				const key = href.slice(1);
+				linksById.set(key, [...(linksById.get(key) ?? []), a]);
+			});
 		});
-		if (map.size === 0) return;
+		if (linksById.size === 0) return;
 
 		let current: string | null = null;
+		activeObserver?.disconnect();
 		const observer = new IntersectionObserver(
 			(entries) => {
 				for (const entry of entries) {
 					if (entry.isIntersecting) {
 						current = entry.target.id;
-						document.querySelectorAll(".toc-link").forEach((a) => {
-							const active = a.getAttribute("href") === `#${current}`;
-							a.classList.toggle("text-accent", active);
-							a.classList.toggle("font-semibold", active);
-							a.classList.toggle("border-accent", active);
-						});
+						for (const [key, links] of linksById) {
+							const active = key === current;
+							for (const a of links) {
+								a.classList.toggle("text-accent", active);
+								a.classList.toggle("font-semibold", active);
+								a.classList.toggle("border-accent", active);
+							}
+						}
 					}
 				}
 			},
 			{ rootMargin: "-15% 0px -75% 0px", threshold: 0 },
 		);
+		activeObserver = observer;
 
 		document.querySelectorAll("article h2[id], article h3[id], article h4[id]").forEach((h) => {
-			if (map.has(h.id)) observer.observe(h);
+			if (linksById.has(h.id)) observer.observe(h);
 		});
 	}
 
-	document.addEventListener("astro:page-load", initScrollspy);
+	// 同一页面两个 Toc 实例时组件脚本可能执行两次：注册只做一次，但每次导航都要重跑 init
+	const w = window as typeof window & { __tocScrollspyRegistered?: boolean };
+	if (!w.__tocScrollspyRegistered) {
+		w.__tocScrollspyRegistered = true;
+		document.addEventListener("astro:page-load", initScrollspy);
+	}
 	if (document.readyState !== "loading") initScrollspy();
 </script>

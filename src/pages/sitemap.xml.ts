@@ -1,16 +1,16 @@
 import type { APIContext } from "astro";
 import { getAllPosts } from "../lib/posts";
+import { pageRegistry, postUrl } from "../config";
 
 /** 自托管 sitemap（零依赖）：静态页面 + 全部文章，lastmod 取发布日期 */
 export async function GET(context: APIContext) {
 	const origin = context.site?.origin ?? "https://exlei.github.io";
 	const posts = await getAllPosts();
 
-	const staticPages = ["/", "/archive/", "/search/", "/about/"];
 	const entries = [
-		...staticPages.map((p) => ({ loc: `${origin}${p}`, lastmod: null })),
+		...pageRegistry.map((p) => ({ loc: `${origin}${p.path}`, lastmod: null })),
 		...posts.map((p) => ({
-			loc: `${origin}/posts/${p.id}/`,
+			loc: `${origin}${postUrl(p.id)}`,
 			lastmod: p.data.published.toISOString(),
 		})),
 	];

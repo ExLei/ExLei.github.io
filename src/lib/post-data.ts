@@ -29,3 +29,20 @@ export function toPostData(post: CollectionEntry<"posts">): PostData {
 		readingMinutes: readingTime(post.body ?? ""),
 	};
 }
+
+/** zh-CN 长日期格式（PostList / PostMeta 共用，唯一 owner）
+ * 手工拼接：不依赖 toLocaleDateString 的运行时 ICU 数据（small-icu 下输出会漂移）。 */
+export function formatPublishedDate(iso: string): string {
+	const d = new Date(iso);
+	return `${d.getFullYear()}年${d.getMonth() + 1}月${d.getDate()}日`;
+}
+
+/** 文章邻居（按列表顺序）：prev = 更旧一篇（i+1），next = 更新一篇（i-1）；首尾为 undefined */
+export function withNeighbors<T extends { id: string }>(
+	items: T[],
+	id: string,
+): { prev?: T; next?: T } {
+	const i = items.findIndex((it) => it.id === id);
+	if (i === -1) return {};
+	return { prev: items[i + 1], next: items[i - 1] };
+}

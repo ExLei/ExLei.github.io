@@ -1,17 +1,17 @@
 <script lang="ts">
 	import Icon from "@iconify/svelte";
 	import { filterState } from "../../lib/filter.svelte";
+	import { activeFilterCount } from "../../lib/filter";
+	import type { PostData } from "../../lib/post-data";
 	import FilterPanel from "../FilterPanel.svelte";
 
-	/* 筛选 Dock：与主 Dock 同风格，默认收起，按下弹出详细筛选面板 */
+	/* 筛选 Dock：与主 Dock 同风格，默认收起，按下弹出详细筛选面板。
+	 * posts 由 NavContainer（server 端）按页面传入，FilterPanel 不再自行 fetch。 */
+	let { posts = [] }: { posts?: PostData[] } = $props();
 	let open = $state(false);
 	let rootEl = $state<HTMLElement>();
 
-	const activeCount = $derived(
-		(filterState.year !== "all" ? 1 : 0) +
-			filterState.tags.length +
-			(filterState.sortBy === "oldest" ? 1 : 0),
-	);
+	const activeCount = $derived(activeFilterCount(filterState));
 
 	/* 点击外部收起 */
 	$effect(() => {
@@ -46,7 +46,7 @@
 	>
 		<Icon icon="material-symbols:tune-rounded" class="size-6" />
 		<span
-			class="pointer-events-none absolute -top-10 whitespace-nowrap rounded-md bg-ink px-2 py-1 text-xs text-paper opacity-0 transition-opacity group-hover:opacity-100"
+			class="pointer-events-none absolute -top-10 whitespace-nowrap rounded-md bg-ink px-2 py-1 text-xs text-paper opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100"
 		>
 			筛选
 		</span>
@@ -57,9 +57,9 @@
 
 	{#if open}
 		<div
-			class="absolute bottom-full left-0 mb-3 w-56 rounded-2xl border border-hairline bg-paper/95 p-4 shadow-lg backdrop-blur-md"
+			class="absolute bottom-full left-0 mb-3 w-56 max-h-[calc(100dvh-8rem)] overflow-y-auto rounded-2xl border border-hairline bg-paper/95 p-4 shadow-lg backdrop-blur-md"
 		>
-			<FilterPanel />
+			<FilterPanel posts={posts} />
 		</div>
 	{/if}
 </div>

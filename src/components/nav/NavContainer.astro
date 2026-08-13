@@ -1,13 +1,16 @@
 ---
-import { navConfig } from "../../config";
+import { filterablePaths, navConfig } from "../../config";
+import { getAllPostData } from "../../lib/posts";
 import Dock from "./Dock.svelte";
 import FilterDock from "./FilterDock.svelte";
 import SideNav from "./SideNav.svelte";
 import MobileTabBar from "./MobileTabBar.svelte";
 
-/* 筛选 Dock 仅首页/归档/搜索可用（SSR 首屏条件渲染，导航后由新文档决定——不 persist）
- * Dock/SideNav/MobileTabBar 各自 persist：页面过渡时保留 DOM，配合 CSS 完全静止 */
-const showFilter = ["/", "/archive/", "/search/"].includes(Astro.url.pathname);
+/* 筛选 Dock 仅可筛选页面可用（SSR 首屏条件渲染，导航后由新文档决定——不 persist）
+ * Dock/SideNav/MobileTabBar 各自 persist：页面过渡时保留 DOM，配合 CSS 完全静止。
+ * 筛选数据：FilterPanel 为纯 props 消费端，此处按页面取一次并透传。 */
+const showFilter = filterablePaths.includes(Astro.url.pathname);
+const filterData = showFilter ? await getAllPostData() : [];
 ---
 {navConfig.position === "bottom" ? (
 	<div
@@ -18,7 +21,7 @@ const showFilter = ["/", "/archive/", "/search/"].includes(Astro.url.pathname);
 		<div class="relative mx-auto w-fit">
 			{showFilter && (
 				<div class="absolute bottom-0 right-full mr-3">
-					<FilterDock client:load />
+					<FilterDock client:load posts={filterData} />
 				</div>
 			)}
 			<div transition:persist="dockbar">

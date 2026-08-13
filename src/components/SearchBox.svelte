@@ -1,12 +1,15 @@
 <script lang="ts">
-	import { withBase } from "../config";
+	import { postUrl, withBase } from "../config";
 	import { filterState } from "../lib/filter.svelte";
-	import type { SearchIndexEntry } from "../lib/posts";
+	import { applyFilters } from "../lib/filter";
+	import type { SearchIndexEntry } from "../lib/post-data";
 
 	let query = $state("");
 	let results = $state<Array<{ url: string; title: string; excerpt: string }>>([]);
 	let busy = $state(false);
 	let index: SearchIndexEntry[] | null = null;
+	/** 请求序号：乱序竞态守卫——过期的慢响应不得覆盖新结果 */
+	let seq = 0;
 
 	/* 筛选 Dock 条件变化时重新搜索（建立响应式依赖） */
 	$effect(() => {
@@ -41,40 +44,31 @@
 
 	async function search() {
 		const q = query.trim();
+		const id = ++seq;
 		if (!q) {
 			results = [];
+			busy = false;
 			return;
 		}
+		busy = true;
 		try {
 			index ??= await (await fetch(withBase("/search-index.json"))).json();
+			if (id !== seq) return; // 已有更新的请求，丢弃过期结果
 			const terms = q.toLowerCase().split(/\s+/).filter(Boolean);
-			const hits = index
-				.filter((doc) => terms.every((t) => doc.text.toLowerCase().includes(t)))
-				.filter(
-					(doc) =>
-						filterState.year === "all" ||
-						new Date(doc.published).getFullYear() === filterState.year,
-				)
-				.filter(
-					(doc) =>
-						filterState.tags.length === 0 ||
-						filterState.tags.some((t) => doc.tags.includes(t)),
-				)
-				.sort((a, b) => {
-					const d = new Date(a.published).getTime() - new Date(b.date).getTime();
-					return filterState.sortBy === "newest" ? -d : d;
-				})
-				.slice(0, 10);
+			const hits = applyFilters(
+				index.filter((doc) => terms.every((t) => doc.text.toLowerCase().includes(t))),
+				filterState,
+			).slice(0, 10);
 			results = hits.map((doc) => ({
-				url: withBase(`/posts/${doc.slug}/`),
+				url: postUrl(doc.slug),
 				title: highlight(doc.title, terms),
 				excerpt: makeExcerpt(doc, terms),
 			}));
 		} catch (e) {
 			console.error("搜索失败:", e);
-			results = [];
+			if (id === seq) results = [];
 		} finally {
-			busy = false;
+			if (id === seq) busy = false;
 		}
 	}
 </script>

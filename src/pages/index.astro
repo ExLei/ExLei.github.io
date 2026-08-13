@@ -20,7 +20,7 @@ const data = await getAllPostData();
 					筛选
 				</summary>
 				<div class="border-t border-hairline px-4 py-4">
-					<FilterPanel client:load />
+					<FilterPanel client:load posts={data} />
 				</div>
 			</details>
 

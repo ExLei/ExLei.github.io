@@ -1,23 +1,18 @@
 ---
-import type { Post } from "../lib/posts";
-import { readingTime } from "../lib/reading-time";
+import { formatPublishedDate, type PostData } from "../lib/post-data";
 
 interface Props {
-	post: Post;
+	post: PostData;
 }
 
 const { post } = Astro.props;
-const date = post.data.published.toLocaleDateString("zh-CN", {
-	year: "numeric",
-	month: "long",
-	day: "numeric",
-});
+const date = formatPublishedDate(post.published);
 ---
 <div class="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-xs text-ink-tertiary">
-	<time datetime={post.data.published.toISOString()}>{date}</time>
-	{post.data.category && <span class="text-accent">#{post.data.category}</span>}
-	{post.data.tags.map((t) => (
+	<time datetime={post.published}>{date}</time>
+	{post.category && <span class="text-accent">#{post.category}</span>}
+	{post.tags.map((t) => (
 		<span>#{t}</span>
 	))}
-	<span>{readingTime(post.body ?? "")} 分钟阅读</span>
+	<span>{post.readingMinutes} 分钟阅读</span>
 </div>
