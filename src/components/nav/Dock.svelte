@@ -49,7 +49,7 @@
 		>
 			<Icon icon={item.icon} class="size-6" />
 			<span
-				class="pointer-events-none absolute -top-10 whitespace-nowrap rounded-md bg-ink px-2 py-1 text-xs text-paper opacity-0 transition-opacity group-hover:opacity-100"
+				class="pointer-events-none absolute -top-10 whitespace-nowrap rounded-md bg-ink px-2 py-1 text-xs text-paper opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100"
 			>
 				{item.label}
 			</span>
